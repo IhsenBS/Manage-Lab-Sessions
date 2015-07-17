@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Dashboard">
+  <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+  <title>PPP</title>
+  <!-- Bootstrap core CSS -->
+  <link href="assets/css/bootstrap.css" rel="stylesheet">
+  <!--external css-->
+  <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="assets/js/gritter/css/jquery.gritter.css" />
+  <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+  <!-- Custom styles for this template -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/style-responsive.css" rel="stylesheet">
+  <script src="assets/js/chart-master/Chart.js"></script>
+  <script src="js/properties.js"></script>
+  <script src="js/angular.min.js"></script>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-sanitize.js"></script>
+  <script src="select/select.js"></script>
+  <link rel="stylesheet" href="select/select.css">
+
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
+
+    <body ng-app="app">
+      <section id="container">
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS ***********************************************************************************************************************************************************
+    -->
+    <!--header start-->
+    <header class="header black-bg">
+      <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+      </div>
+      <!--logo start-->
+      <a href="index.html" class="logo"><b>PPP</b></a>
+      <!--logo end-->
+      <div class="nav notify-row" id="top_menu"></div>
+      <div class="top-menu"></div>
+    </header>
+    <!--header end-->
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU ***********************************************************************************************************************************************************
+    -->
+    <!--sidebar start-->
+    <aside>
+      <div id="sidebar" class="nav-collapse ">
+        <ul ng-include="'sidebar.html'" class="sidebar-menu" id="nav-accordion" />
+      </div>
+    </aside>
+    <!--sidebar end-->
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT ***********************************************************************************************************************************************************
+    -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper" ng-controller="controller">
+      <form novalidate class="form-horizontal style-form">
+        <h2>Notes</h2>
+        <div class="row" id="row1">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label class="col-sm-2 col-sm-2 control-label">Classe :</label>
+              <div class="col-sm-4">
+                <select ng-model="selectedClasse" ng-change="change()" class="form-control">
+                  <option ng-repeat="x in classes" value="{{$index}}">{{x.nom}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label class="col-sm-2 col-sm-2 control-label">Groupe :</label>
+              <div class="col-sm-4">
+                <select ng-model="selectedGroupe" ng-change="change2()" class="form-control">
+                  <option ng-if="x.classeId == classe.objectId" ng-repeat="x in groupes" value="{{$index}}">{{x.prenom + " " + x.nom}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" id="row2">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label class="col-sm-2 col-sm-2 control-label">Matiere :</label>
+              <div class="col-sm-4">
+                <select ng-model="selectedMatiere" ng-change="change4()" class="form-control">
+                  <option ng-if="x.classeId == classe.objectId" ng-repeat="x in matieres" value="{{$index}}">{{x.nom}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label class="col-sm-2 col-sm-2 control-label">Seance :</label>
+              <div class="col-sm-4">
+                <select ng-model="selectedSeance" ng-change="change5()" class="form-control">
+                  <option ng-if="x.matiereId == matiere.objectId" ng-repeat="x in seances" value="{{$index}}">{{x.nom}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div ng-if="seance.objectId && groupe.objectId " id="bouton_valider">
+        <button ng-click="valider()" class="btn btn-default">Valider</button> 
+      </div>
+      <div ng-if="valide">
+        <h3>Liste des etudiants {{ groupe.nom }}</h3>
+        <table class="table table-hover">
+          <thead>
+            <th width="25%">Binome</th>
+            <th>TP précèdent</th>
+            <th>Homework</th>
+            <th>Note TP</th>
+            <th>Remarque</th>
+            <th>Etat TP</th>
+          </thead>
+          <tr ng-repeat="x in binomes">
+            <td width="25%" ng-click="select($index)"><p ng-repeat="eleve in x.eleves">{{eleve.prenom + " " +eleve.nom}}</p></td>
+            <td><p ng-repeat="etat in x.etats">{{etat.etat}}</p></td>
+            <td>                  
+              <select class="form-control" ng-model="x.homework">
+                <option></option>
+                <option>Ok</option>
+                <option>Bien</option>
+                <option>Non</option>
+              </select>
+            </td>
+            <td>
+              <input class="form-control" ng-model="x.note"/>
+            </td>
+            <td>
+              <input class="form-control" ng-model="x.remarque"/>
+            </td>
+            <td>                
+              <select class="form-control" ng-model="x.etat">
+                <option></option>
+                <option>Activité 1</option>
+                <option>Activité 2</option>
+                <option>Activité 3</option>
+                <option>Terminé</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <button ng-click="ajouter()" class="btn btn-default">Ajouter</button> 
+      <button ng-click="add()" class="btn btn-default">Ajouter Etudiant</button> 
+      <button ng-click="save()" class="btn btn-default">Enregistrer</button> 
+      <button ng-click="anciensBinomes()" class="btn btn-default" ng-if="ancien==true">Continuer Anciens Binomes</button> 
+        <ui-select ng-model="etudiant.selected" theme="select2" ng-disabled="disabled" style="min-width: 300px;" title="Choose a person">
+        <ui-select-match placeholder="Select a person in the list or search his name/age...">{{$select.selected.prenom + " " + $select.selected.nom}}</ui-select-match>
+        <ui-select-choices repeat="etudiant in etudiants | propsFilter: {nom: $select.search, prenom: $select.search}">
+        <div ng-bind-html="etudiant.nom | highlight: $select.search"></div>
+        <small>
+          {{etudiant.prenom}}
+        </small>
+      </ui-select-choices>
+
+    </div>
+  </div>
+</div>
+<script src="js/notes.js"></script>
+</section>
+</section>
+</section>
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+<script type="text/javascript" src="assets/js/gritter/js/jquery.gritter.js"></script>
+<script type="text/javascript" src="assets/js/gritter-conf.js"></script>
+<!--script for this page-->
+<script src="assets/js/sparkline-chart.js"></script>
+<script src="assets/js/zabuto_calendar.js"></script>
+<script type="application/javascript">
+$(document).ready(function () {
+  $("#date-popover").popover({html: true, trigger: "manual"});
+  $("#date-popover").hide();
+  $("#date-popover").click(function (e) {
+    $(this).hide();
+  });
+
+  $("#my-calendar").zabuto_calendar({
+    action: function () {
+      return myDateFunction(this.id, false);
+    },
+    action_nav: function () {
+      return myNavFunction(this.id);
+    },
+    ajax: {
+      url: "show_data.php?action=1",
+      modal: true
+    },
+    legend: [
+    {type: "text", label: "Special event", badge: "00"},
+    {type: "block", label: "Regular event", }
+    ]
+  });
+});
+
+
+function myNavFunction(id) {
+  $("#date-popover").hide();
+  var nav = $("#" + id).data("navigation");
+  var to = $("#" + id).data("to");
+  console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
+}
+</script>
+</body>
+
+</html>
